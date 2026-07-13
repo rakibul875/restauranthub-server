@@ -26,14 +26,21 @@ app.use(express.urlencoded({ extended: true }));
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const database = client.db("restauranthub");
     const userCollection = database.collection("user");
     const itemCollection = database.collection("items");
+    const addToCartCollection = database.collection("cart");
 
-    app.get("/users", async (req: Request, res: Response) => {
-      const users = await userCollection.find().toArray();
-      res.send(users);
+    // app.get("/users", async (req: Request, res: Response) => {
+    //   const users = await userCollection.find().toArray();
+    //   res.send(users);
+    // });
+
+    app.post('/cart', async (req: Request, res: Response) => {
+      const cartItem = req.body;
+      const result = await addToCartCollection.insertOne(cartItem);
+      res.send(result);
     });
 
     app.get('/items/:id',async (req:Request,res:Response)=>{
