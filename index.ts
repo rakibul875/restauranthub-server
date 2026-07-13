@@ -36,6 +36,13 @@ async function run() {
       res.send(users);
     });
 
+    app.get('/items/:id',async (req:Request,res:Response)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const item = await itemCollection.findOne(query);
+      res.send(item);
+    })
+
     app.get("/items", async (req: Request, res: Response) => {
       try {
         const { search, category } = req.query;
