@@ -31,24 +31,43 @@ async function run() {
     const userCollection = database.collection("user");
     const itemCollection = database.collection("items");
 
-
-
-
     app.get("/users", async (req: Request, res: Response) => {
       const users = await userCollection.find().toArray();
       res.send(users);
     });
 
-    app.post('/items',async(req:Request,res:Response)=>{
+    app.get("/items", async (req: Request, res: Response) => {
+      try {
+        const { search, category } = req.query;
+        let query: any = {};
+        if (search) {
+          query.name = { $regex: search, $options: "i" };
+        }
+
+        if (category && category !== "All") {
+          query.category = category;
+        }
+        const items = await itemCollection
+          .find(query)
+          .sort({ createdAt: -1 })
+          .toArray();
+
+        res.send(items);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+        res.status(500).send({ message: "Internal server error" });
+      }
+    });
+
+    app.post("/items", async (req: Request, res: Response) => {
       const item = req.body;
       const newItem = {
         ...item,
-        createdAt: new Date()
-      }
+        createdAt: new Date(),
+      };
       const result = await itemCollection.insertOne(newItem);
       res.send(result);
-    })
-
+    });
 
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
