@@ -37,18 +37,40 @@ async function run() {
     //   res.send(users);
     // });
 
-    app.post('/cart', async (req: Request, res: Response) => {
+    app.delete("/my-cart/:id", async (req: Request, res: Response) => {
+      const { id } = req.params;
+
+      const filter = {
+        _id: new ObjectId(id),
+      };
+
+      const result = await userCollection.deleteOne(filter);
+
+      res.send(result);
+    });
+    app.get("/my-cart", async (req: Request, res: Response) => {
+      const query: any = {};
+
+      if (req.query.userId) {
+        query.userId = req.query.userId;
+      }
+
+      const cartItems = await addToCartCollection.find(query).toArray();
+
+      res.send(cartItems);
+    });
+    app.post("/cart", async (req: Request, res: Response) => {
       const cartItem = req.body;
       const result = await addToCartCollection.insertOne(cartItem);
       res.send(result);
     });
 
-    app.get('/items/:id',async (req:Request,res:Response)=>{
+    app.get("/items/:id", async (req: Request, res: Response) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const item = await itemCollection.findOne(query);
       res.send(item);
-    })
+    });
 
     app.get("/items", async (req: Request, res: Response) => {
       try {
