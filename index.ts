@@ -39,12 +39,14 @@ async function run() {
 
     app.delete("/my-cart/:id", async (req: Request, res: Response) => {
       const { id } = req.params;
+      console.log(id)
 
       const filter = {
         _id: new ObjectId(id),
       };
 
-      const result = await userCollection.deleteOne(filter);
+      const result = await addToCartCollection.deleteOne(filter);
+      console.log(result)
 
       res.send(result);
     });
