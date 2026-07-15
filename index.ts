@@ -75,6 +75,14 @@ async function run() {
       const result = await orderCollection.insertOne(newData);
       res.send(result);
     });
+    app.get('/my-payment',async (req: Request, res: Response)=>{
+      const query:any={}
+      if(req.query.userId){
+        query.userId=req.query.userId
+      }
+      const result = await subscriptionCollection.find(query).toArray()
+      res.send(result)
+    })
     app.post("/subscription", async (req: Request, res: Response) => {
       const data = req.body;
       const isExist = await subscriptionCollection.findOne({
