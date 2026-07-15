@@ -49,6 +49,10 @@ async function run() {
 
       res.send(result);
     });
+    app.get("/orders", async (req: Request, res: Response) => {
+      const result = await orderCollection.find().toArray();
+      res.send(result);
+    });
     app.get("/my-order", async (req: Request, res: Response) => {
       const query: any = {};
       if (req.query.userId) {
@@ -75,18 +79,18 @@ async function run() {
       const result = await orderCollection.insertOne(newData);
       res.send(result);
     });
-    app.get('/payment',async (req: Request, res: Response)=>{
-      const result = await subscriptionCollection.find().toArray()
-      res.send(result)
-    })
-    app.get('/my-payment',async (req: Request, res: Response)=>{
-      const query:any={}
-      if(req.query.userId){
-        query.userId=req.query.userId
+    app.get("/payment", async (req: Request, res: Response) => {
+      const result = await subscriptionCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/my-payment", async (req: Request, res: Response) => {
+      const query: any = {};
+      if (req.query.userId) {
+        query.userId = req.query.userId;
       }
-      const result = await subscriptionCollection.find(query).toArray()
-      res.send(result)
-    })
+      const result = await subscriptionCollection.find(query).toArray();
+      res.send(result);
+    });
     app.post("/subscription", async (req: Request, res: Response) => {
       const data = req.body;
       const isExist = await subscriptionCollection.findOne({
