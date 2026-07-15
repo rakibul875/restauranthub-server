@@ -32,12 +32,30 @@ async function run() {
     const itemCollection = database.collection("items");
     const addToCartCollection = database.collection("cart");
     const subscriptionCollection = database.collection("subscription");
+    const orderCollection=database.collection('orders')
 
     // app.get("/users", async (req: Request, res: Response) => {
     //   const users = await userCollection.find().toArray();
     //   res.send(users);
     // });
-
+    app.post('/order',async(req:Request,res:Response)=>{
+      const data=req.body
+        const isExist = await orderCollection.findOne({
+        sessionId: data.sessionId,
+      });
+      if (isExist) {
+        return res.send({
+          success: true,
+          message: "Subscription already exists",
+        });
+      }
+      const newData={
+        ...data,
+        orderAt: new Date()
+      }
+      const result= await orderCollection.insertOne(newData)
+      res.send(result)
+    })
     app.post("/subscription", async (req: Request, res: Response) => {
       const data = req.body;
       const isExist = await subscriptionCollection.findOne({
