@@ -38,14 +38,25 @@ async function run() {
     //   const users = await userCollection.find().toArray();
     //   res.send(users);
     // });
-    app.get('/my-order',async(req:Request,res:Response)=>{
-      const query:any={}
-      if(req.query.userId){
-        query.userId=req.query.userId
+    app.delete("/my-order/:id", async (req: Request, res: Response) => {
+      const { id } = req.params;
+
+      const filter = {
+        _id: new ObjectId(id),
+      };
+
+      const result = await orderCollection.deleteOne(filter);
+
+      res.send(result);
+    });
+    app.get("/my-order", async (req: Request, res: Response) => {
+      const query: any = {};
+      if (req.query.userId) {
+        query.userId = req.query.userId;
       }
-      const result= await orderCollection.find(query).toArray() 
-      res.send(result)
-    })
+      const result = await orderCollection.find(query).toArray();
+      res.send(result);
+    });
     app.post("/order", async (req: Request, res: Response) => {
       const data = req.body;
       const isExist = await orderCollection.findOne({
