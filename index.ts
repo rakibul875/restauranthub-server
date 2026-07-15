@@ -31,22 +31,42 @@ async function run() {
     const userCollection = database.collection("user");
     const itemCollection = database.collection("items");
     const addToCartCollection = database.collection("cart");
+    const subscriptionCollection = database.collection("subscription");
 
     // app.get("/users", async (req: Request, res: Response) => {
     //   const users = await userCollection.find().toArray();
     //   res.send(users);
     // });
 
+    app.post("/subscription", async (req: Request, res: Response) => {
+      const data = req.body;
+      const isExist = await subscriptionCollection.findOne({
+        sessionId: data.sessionId,
+      });
+      if (isExist) {
+        return res.send({
+          success: true,
+          message: "Subscription already exists",
+        });
+      }
+      const newData = {
+        ...data,
+        subscriptionAt: new Date(),
+      };
+      const result = await subscriptionCollection.insertOne(newData);
+      res.send(result);
+    });
+
     app.delete("/my-cart/:id", async (req: Request, res: Response) => {
       const { id } = req.params;
-      console.log(id)
+      console.log(id);
 
       const filter = {
         _id: new ObjectId(id),
       };
 
       const result = await addToCartCollection.deleteOne(filter);
-      console.log(result)
+      console.log(result);
 
       res.send(result);
     });
