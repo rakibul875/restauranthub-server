@@ -32,15 +32,15 @@ async function run() {
     const itemCollection = database.collection("items");
     const addToCartCollection = database.collection("cart");
     const subscriptionCollection = database.collection("subscription");
-    const orderCollection=database.collection('orders')
+    const orderCollection = database.collection("orders");
 
     // app.get("/users", async (req: Request, res: Response) => {
     //   const users = await userCollection.find().toArray();
     //   res.send(users);
     // });
-    app.post('/order',async(req:Request,res:Response)=>{
-      const data=req.body
-        const isExist = await orderCollection.findOne({
+    app.post("/order", async (req: Request, res: Response) => {
+      const data = req.body;
+      const isExist = await orderCollection.findOne({
         sessionId: data.sessionId,
       });
       if (isExist) {
@@ -49,13 +49,13 @@ async function run() {
           message: "Subscription already exists",
         });
       }
-      const newData={
+      const newData = {
         ...data,
-        orderAt: new Date()
-      }
-      const result= await orderCollection.insertOne(newData)
-      res.send(result)
-    })
+        orderAt: new Date(),
+      };
+      const result = await orderCollection.insertOne(newData);
+      res.send(result);
+    });
     app.post("/subscription", async (req: Request, res: Response) => {
       const data = req.body;
       const isExist = await subscriptionCollection.findOne({
@@ -73,6 +73,17 @@ async function run() {
       };
       const result = await subscriptionCollection.insertOne(newData);
       res.send(result);
+    });
+
+    app.delete("/my-cart/user/:userId", async (req: Request, res: Response) => {
+      const { userId } = req.params;
+
+      const result = await addToCartCollection.deleteMany({ userId });
+
+      res.send({
+        success: true,
+        deletedCount: result.deletedCount,
+      });
     });
 
     app.delete("/my-cart/:id", async (req: Request, res: Response) => {
