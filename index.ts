@@ -122,7 +122,15 @@ async function run() {
       const item = await itemCollection.findOne(query);
       res.send(item);
     });
+    app.get("/latest-items", async (req: Request, res: Response) => {
+      const result = await itemCollection
+        .find({})
+        .sort({ createdAt: -1 })
+        .limit(4)
+        .toArray();
 
+      res.send(result);
+    });
     app.get("/items", async (req: Request, res: Response) => {
       try {
         const { search, category } = req.query;
