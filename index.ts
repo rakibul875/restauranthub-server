@@ -75,6 +75,10 @@ async function run() {
       const result = await orderCollection.insertOne(newData);
       res.send(result);
     });
+    app.get('/payment',async (req: Request, res: Response)=>{
+      const result = await subscriptionCollection.find().toArray()
+      res.send(result)
+    })
     app.get('/my-payment',async (req: Request, res: Response)=>{
       const query:any={}
       if(req.query.userId){
