@@ -34,10 +34,11 @@ async function run() {
     const subscriptionCollection = database.collection("subscription");
     const orderCollection = database.collection("orders");
 
-    // app.get("/users", async (req: Request, res: Response) => {
-    //   const users = await userCollection.find().toArray();
-    //   res.send(users);
-    // });
+    app.get("/users", async (req: Request, res: Response) => {
+      const users = await userCollection.find().toArray();
+      res.send(users);
+    });
+
     app.delete("/my-order/:id", async (req: Request, res: Response) => {
       const { id } = req.params;
 
@@ -46,6 +47,21 @@ async function run() {
       };
 
       const result = await orderCollection.deleteOne(filter);
+
+      res.send(result);
+    });
+    app.patch("/orders/:id", async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const {status} = req.body;
+
+      const result = await orderCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            status,
+          },
+        },
+      );
 
       res.send(result);
     });
